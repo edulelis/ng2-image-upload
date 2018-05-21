@@ -1,4 +1,7 @@
-import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core';
+import {
+    Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild,
+    ViewEncapsulation
+} from '@angular/core';
 import { Headers, Response } from '@angular/http';
 import { UploadMetadata } from './before-upload.interface';
 
@@ -16,7 +19,8 @@ export class FileHolder {
 @Component({
   selector: 'image-upload',
   templateUrl: './image-upload.component.html',
-  styleUrls: ['./image-upload.component.css']
+  styleUrls: ['./image-upload.component.css'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class ImageUploadComponent implements OnInit, OnChanges {
 
