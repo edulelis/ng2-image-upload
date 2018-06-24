@@ -18,7 +18,6 @@ export class FileHolder {
 @Component({
   selector: 'image-upload',
   templateUrl: './image-upload.component.html',
-  styleUrls: ['./image-upload.component.css'],
   encapsulation: ViewEncapsulation.None,
 })
 export class ImageUploadComponent implements OnInit, OnChanges {
