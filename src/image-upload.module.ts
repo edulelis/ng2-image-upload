@@ -1,13 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { ModuleWithProviders, NgModule } from '@angular/core';
-import { HttpModule } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
 import { FileDropDirective } from './file-drop.directive';
 import { ImageUploadComponent } from './image-upload/image-upload.component';
 import { ImageService } from './image-upload/image.service';
 
+
 @NgModule({
-  imports: [CommonModule, HttpModule],
+  imports: [CommonModule, HttpClient],
   declarations: [ImageUploadComponent, FileDropDirective],
   exports: [ImageUploadComponent]
 })
