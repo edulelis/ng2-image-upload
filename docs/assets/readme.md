@@ -45,17 +45,6 @@ Content-Type. The query has a single field called `image`.
 
 `[uploadedFiles]="['http://example.com/path/to/my/file', {'fileName': 'fileName.jpg', url: 'http://example.com/path/to/my/file'}]"` - enters the uploaded files from the previous time.
 
-#### Custom headers
-
-If you need to send some headers with your request (for example `Authorization` headers), 
-you can use `[headers]` directive like this.
-
-````html
-<image-upload 
-  [url]="'my-url.com'"
-  [headers]="{Authorization: 'MyToken'}">
-</image-upload>
-````
 
 **Note** that headers are sent only if you provide a url.
 

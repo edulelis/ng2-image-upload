@@ -1,5 +1,7 @@
-import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core';
-import { Headers, Response } from '@angular/http';
+import {
+    Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild,
+    ViewEncapsulation
+} from '@angular/core';
 import { UploadMetadata } from './before-upload.interface';
 
 import { ImageService } from './image.service';
@@ -7,7 +9,7 @@ import { Style } from './style';
 
 export class FileHolder {
   public pending: boolean = false;
-  public serverResponse: { status: number, response: any };
+  public response: any;
 
   constructor(public src: string, public file: File) {
   }
@@ -16,7 +18,7 @@ export class FileHolder {
 @Component({
   selector: 'image-upload',
   templateUrl: './image-upload.component.html',
-  styleUrls: ['./image-upload.component.css']
+  encapsulation: ViewEncapsulation.None,
 })
 export class ImageUploadComponent implements OnInit, OnChanges {
 
@@ -32,7 +34,6 @@ export class ImageUploadComponent implements OnInit, OnChanges {
   @Input() clearButtonCaption = 'Clear';
   @Input() dropBoxMessage = 'Drop your images here!';
   @Input() fileTooLargeMessage;
-  @Input() headers: Headers | { [name: string]: any };
   @Input() max = 100;
   @Input() maxFileSize: number;
   @Input() preview = true;
@@ -47,8 +48,7 @@ export class ImageUploadComponent implements OnInit, OnChanges {
   @Output() uploadFinished = new EventEmitter<FileHolder>();
   @Output() previewClicked = new EventEmitter<FileHolder>();
 
-  @ViewChild('input')
-  private inputElement: ElementRef;
+  @ViewChild('input') inputElement: ElementRef;
   private pendingFilesCounter: number = 0;
 
   constructor(private imageService: ImageService) {
@@ -65,14 +65,12 @@ export class ImageUploadComponent implements OnInit, OnChanges {
     this.files.forEach(f => this.removed.emit(f));
     this.files = [];
     this.fileCounter = 0;
-    this.inputElement.nativeElement.value = '';
   }
 
   deleteFile(file: FileHolder): void {
     let index = this.files.indexOf(file);
     this.files.splice(index, 1);
     this.fileCounter--;
-    this.inputElement.nativeElement.value = '';
     this.removed.emit(file);
   }
 
@@ -105,8 +103,8 @@ export class ImageUploadComponent implements OnInit, OnChanges {
 
   private countRemainingSlots = () => this.max - this.fileCounter;
 
-  private onResponse(response: Response, fileHolder: FileHolder) {
-    fileHolder.serverResponse = { status: response.status, response };
+  private onResponse(response: Object, fileHolder: FileHolder) {
+    fileHolder.response = response;
     fileHolder.pending = false;
 
     this.uploadFinished.emit(fileHolder);
@@ -144,7 +142,6 @@ export class ImageUploadComponent implements OnInit, OnChanges {
 
       if (this.maxFileSize && file.size > this.maxFileSize) {
         this.fileCounter--;
-        this.inputElement.nativeElement.value = '';
         this.showFileTooLargeMessage = true;
         continue;
       }
@@ -153,7 +150,6 @@ export class ImageUploadComponent implements OnInit, OnChanges {
 
       if (beforeUploadResult.abort) {
         this.fileCounter--;
-        this.inputElement.nativeElement.value = '';
         continue;
       }
 
@@ -176,7 +172,7 @@ export class ImageUploadComponent implements OnInit, OnChanges {
       fileHolder.pending = true;
 
       this.imageService
-        .postImage(url, fileHolder.file, this.headers, this.partName, customForm, this.withCredentials)
+        .postImage(url, fileHolder.file, this.partName, customForm)
         .subscribe(
           response => this.onResponse(response, fileHolder),
           error => {
